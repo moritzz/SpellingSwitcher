@@ -82,7 +82,7 @@
         @"property error_message : \"Spell options not available for this application!\"\n"
         @"\n"
         @"set app_name to my get_front_app()\n"
-        @"if app_name = \"spellingSwitcher\"\n"
+        @"if app_name = \"SpellingSwitcher\"\n"
         @"      tell application \"System Events\"\n"
     	@"          keystroke \"h\" using command down\n"
     	@"	        delay 0.5 --need to adjust for your machine\n"
@@ -114,7 +114,7 @@
         @"          else if exists (window name_of_spelling_window_German) then\n"
         @"              tell utilty to selectLanguage(app_name, name_of_spelling_window_German)\n"
         @"          else\n"
-        @"              activate \"spellingSwitcher\"\n"
+        @"              activate \"SpellingSwitcher\"\n"
         @"              display dialog error_message with icon stop\n"
         @"          end if\n"
         @"      end tell\n"
@@ -154,9 +154,12 @@
     NSString        *menuStatusBarString;
     
     currentLocale = [NSLocale currentLocale];
+    menuStatusBarString = @"✔";
+    /*
     menuStatusBarString = [currentLocale displayNameForKey:NSLocaleIdentifier
                                                      value:[currentLocale localeIdentifier]];
-
+    */
+    
     // Set up the spell check item in the status bar.
     NSStatusBar     *statusBar;
     NSStatusItem    *spellingCheckerItem;
@@ -185,6 +188,7 @@
                       keyEquivalent:@""];
     [languageMenuItem setTarget:self];
     [languageMenuItem setEnabled:NO];
+    // [languageMenuItem setKeyEquivalentModifierMask:(NSControlKeyMask | NSAlternateKeyMask | NSCommandKeyMask)];
     [[self languagesMenu] addItem:languageMenuItem];
 
     // Make a slot for the second language.
@@ -193,6 +197,7 @@
                              action:@selector(selectedLanguage:)
                       keyEquivalent:@""];
     [languageMenuItem setTarget:self];
+    [languageMenuItem setKeyEquivalentModifierMask:(NSControlKeyMask | NSAlternateKeyMask | NSCommandKeyMask)];
     [languageMenuItem setEnabled:NO];
     [[self languagesMenu] addItem:languageMenuItem];
 
@@ -224,6 +229,15 @@
             [[self languagesMenu] addItem:languageMenuItem];
         } /* end if */
     } /* end for */
+    
+    // Make a sperator item.
+    languageMenuItem = [NSMenuItem separatorItem];
+    [[self languagesMenu] addItem:languageMenuItem];
+    
+    // Quit menu
+	NSMenuItem *quitMenuItem = [[[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Quit", nil) action:@selector(terminate:) keyEquivalent:@""] autorelease];
+	[quitMenuItem setTarget:NSApp];
+    [[self languagesMenu] addItem:quitMenuItem];
     
     // Finally add this menu to the menuItem we created in the status bar.    
     [spellingCheckerItem setMenu:[self languagesMenu]];
